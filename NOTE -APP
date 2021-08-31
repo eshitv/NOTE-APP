@@ -1,0 +1,151 @@
+//HTML/CSS
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+</head>
+
+<body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Notes</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+
+                </ul>
+                <form class="d-flex">
+                    <input id="sea" class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-3" style="font-style: oblique;">
+        <h1>Welcome</h1>
+        <div class="card" style="background-color: rgba(253, 253, 253, 0.705); font-style: oblique;">
+            <div class="card-body">
+                <h5 class="card-title">NOTE</h5>
+                <div class="form-floating">
+                    <textarea class="form-control" placeholder="Leave a comment here" id="addtext"></textarea>
+                    <label for="floatingTextarea">Comments</label>
+                </div>
+                <button class="btn btn-primary my-3" id="addbtn">Add Note</button>
+            </div>
+        </div>
+        <hr>
+        <h1>
+            Your notes
+        </h1>
+        <hr>
+        <div id="note" class="row container-fluid">
+
+        </div>
+    </div>
+
+    <script src="app.js">
+    </script>
+</body>
+
+</html>
+
+
+//JAVASCRIPT
+showNote();
+
+
+let addBtn = document.getElementById('addbtn');
+addBtn.addEventListener("click", function(e) {
+
+    let addText = document.getElementById("addtext");
+    let note = localStorage.getItem("note");
+    if (note == null) {
+        noteObj = [];
+    } else {
+        noteObj = JSON.parse(note);
+    }
+
+    noteObj.push(addText.value);
+    localStorage.setItem("note", JSON.stringify(noteObj));
+    addText.value = " ";
+    console.log(noteObj);
+    showNote();
+
+});
+
+function showNote() {
+    let note = localStorage.getItem("note");
+    if (note == null) {
+        noteObj = [];
+    } else {
+        noteObj = JSON.parse(note);
+    }
+
+    let html = " ";
+    noteObj.forEach(function(element, index) {
+        html += `
+        <div class=" car my-2 mx-2 card" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title"> Card ${index + 1}</h5>
+            <p class="card-text">${element}</p>
+            <button id = "${index}" onclick = "delNote(this.ad)"  class="btn btn-primary">Delete Note</button>
+        </div>
+    </div>`;
+
+    });
+
+    let ele = document.getElementById("note");
+    if (noteObj.length != 0) {
+        ele.innerHTML = html;
+
+    } else {
+
+        noteObj.innerHTML = "nothing to show";
+    }
+}
+
+function delNote(index) {
+    console.log("Delete", index);
+
+    let note = localStorage.getItem("note");
+    if (note == null) {
+        noteObj = [];
+    } else {
+        noteObj = JSON.parse(note);
+    }
+    noteObj.splice(index, 1);
+    localStorage.setItem("note", JSON.stringify(noteObj));
+    showNote();
+}
+
+let search = document.getElementById("sea");
+search.addEventListener("input", function() {
+    let inval = search.value.toLowerCase();
+    console.log("input", inval);
+
+    let val = document.getElementsByClassName("car");
+    Array.from(val).forEach(function(element) {
+        let card = element.getElementsByTagName("p")[0].innerText;
+        console.log(card);
+        if (card.includes(inval)) {
+            element.style.display = "block";
+        } else {
+            element.style.display = "none";
+        }
+    });
+
+});
